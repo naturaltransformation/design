@@ -71,10 +71,11 @@ Global variables and linear memory accesses use memory types.
 
 The main storage of a wasm module, called the *linear memory*, is a contiguous,
 byte-addressable range of memory spanning from offset `0` and extending for
-`memory_size` bytes. The linear memory can be considered to be a untyped array
-of bytes. The linear memory is sandboxed; it does not alias the execution
-engine's internal data structures, the execution stack, local variables, global
-variables, or other process memory.
+`memory_size` bytes which can be dynamically adjusted by
+[`resize_memory`](Modules.md#resizing). The linear memory can be considered to
+be a untyped array of bytes. The linear memory is sandboxed; it does not alias
+the execution engine's internal data structures, the execution stack, local
+variables, global variables, or other process memory.
 
 In the MVP, linear memory is not shared between threads of execution. Separate
 modules can execute in separate threads but have their own linear memory and can
@@ -208,6 +209,17 @@ tradeoffs.
     * Either tooling or an explicit opt-in "debug mode" in the spec should allow
       execution of a module in a mode that threw exceptions on out-of-bounds
       access.
+
+### Resizing
+
+As stated [above](AstSemantics.md#linear-memory), linear memory can be resized
+by a `resize_memory` builtin operation. The resize delta is required to be a
+multiple of a global `page_size` constant.  Also as stated
+[above](AstSemantics.md#linear-memory), linear memory is contiguous, meaning
+there are no "holes" in the linear address space. After the MVP, there are
+[future features](FutureFeatures.md#finer-grained-control-over-memory) proposed
+to allow setting protection and creating mappings within the contiguous
+linear memory.
 
 ## Local variables
 
